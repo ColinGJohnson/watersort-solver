@@ -1,6 +1,10 @@
 import copy
 from typing import List, Tuple
 
+Tube = List[int]
+GameState = List[Tube]
+Action = Tuple[int, int]
+
 
 def is_complete(state):
     """Tests if the given puzzle state is a winner."""
@@ -19,11 +23,11 @@ def pour(state, action):
 
 
 class WaterSortProblem:
-    def __init__(self, initial, tubecapacity):
+    def __init__(self, initial: GameState, tube_capacity: int):
         self.initial = initial
-        self.tubecapacity = tubecapacity
+        self.tube_capacity = tube_capacity
 
-    def get_actions(self, state: List[List[int]]) -> List[Tuple[int, int]]:
+    def get_actions(self, state: GameState) -> List[Action]:
         """Gets a list of legal moves from a given state. Moves are represented as 2-tuples
         representing (<index of source tube>, <index of sink tube>)."""
         actions = []
@@ -33,11 +37,12 @@ class WaterSortProblem:
                     actions.append((i, j))
         return actions
 
-    def can_pour(self, source, sink):
+    def can_pour(self, source: Tube, sink: Tube) -> bool:
         """Tests a given source tube can be legally poured in to given sink (destination) tube."""
-        if len(sink) == 0:
+        if len(source) == 0:
+            return False
+        elif len(sink) == 0:
             return True
-        elif len(sink) >= self.tubecapacity or len(source) == 0:
+        elif len(sink) >= self.tube_capacity or len(source) == 0:
             return False
         return source[-1] == sink[-1]
-
