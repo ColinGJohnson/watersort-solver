@@ -2,7 +2,7 @@ from unittest import TestCase
 from WaterSortProblem import WaterSortProblem
 
 
-class TestWaterSortProblem(TestCase):
+class WaterSortProblem(TestCase):
     def test_is_complete(self):
         self.fail()
 

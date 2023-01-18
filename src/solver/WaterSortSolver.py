@@ -1,35 +1,54 @@
+from typing import List
+
 from src.solver import WaterSortProblem
+from src.solver.PriorityQueue import PriorityQueue
+from src.solver.SearchTreeNode import SearchTreeNode
+from src.solver.Types import GameState, Action, Tube
+from src.solver.WaterSortProblem import is_complete
 
 
-class WaterSortSolver:
+def best_first_graph_search(problem: WaterSortProblem, f):
+    """Search nodes with minimum f(node) value first."""
 
-    def best_first_graph_search(self, problem: WaterSortProblem, f, display=False):
+    node = SearchTreeNode(problem.initial)
+    frontier = PriorityQueue([node], key=f)
+    reached = {problem.initial: node}
 
-        f = memoize(f, 'f')
-        node = Node(problem.initial)
-        frontier = PriorityQueue('min', f)
-        frontier.append(node)
-        explored = set()
+    while frontier:
+        node = frontier.pop()
+        if is_complete(node.state):
+            return node
+        for child in expand(problem, node):
+            s = child.state
+            if s not in reached or child.path_cost < reached[s].path_cost:
+                reached[s] = child
+                frontier.add(child)
 
-        while frontier:
-            node = frontier.pop()
-            if problem.goal_test(node.state):
-                return node
-            explored.add(node.state)
-            for child in node.expand(problem):
-                if child.state not in explored and child not in frontier:
-                    frontier.append(child)
-                elif child in frontier:
-                    if f(child) < frontier[child]:
-                        del frontier[child]
-                        frontier.append(child)
+    raise Exception("Failed to find a solution.")
 
-        return None
 
-    def astar_search(problem, h=None, display=False):
-        """A* search is best-first graph search with f(n) = g(n)+h(n).
-        You need to specify the h function when you call astar_search, or
-        else in your Problem subclass."""
+def expand(problem, node):
+    """Expand a node, generating the children nodes."""
+    state = node.state
+    for action in problem.actions(state):
+        next_state = problem.result(state, action)
+        cost = node.path_cost + problem.action_cost(state, action, next_state)
+        yield SearchTreeNode(next_state, node, action, cost)
 
-        h = memoize(h or problem.h, 'h')
-        return best_first_graph_search(problem, lambda n: n.path_cost + h(n), display)
+
+def path_actions(node: SearchTreeNode):
+    """The sequence of actions to get to this node."""
+    if node.parent is None:
+        return []
+    return path_actions(node.parent) + [node.action]
+
+
+def path_states(node: SearchTreeNode) -> List[GameState]:
+    """The sequence of states to get to this node."""
+    return path_states(node.parent) + [node.state]
+
+
+def astar_search(problem: WaterSortProblem, h=None):
+    """Search nodes with minimum f(n) = g(n) + h(n)."""
+    h = h or problem.h
+    return best_first_graph_search(problem, f=lambda n: g(n) + h(n))

@@ -1,12 +1,9 @@
 import copy
-from typing import List, Tuple
-
-Tube = List[int]
-GameState = List[Tube]
-Action = Tuple[int, int]
+from typing import List
+from src.solver.Types import GameState, Action, Tube
 
 
-def is_complete(state):
+def is_complete(state: GameState):
     """Tests if the given puzzle state is a winner."""
     for tube in state:
         if len(set(tube)) > 1:
@@ -14,12 +11,23 @@ def is_complete(state):
     return True
 
 
-def pour(state, action):
+def pour(state: GameState, action: Action):
     """Gets the state that results from making a pour (action) on a game state."""
     modified = copy.deepcopy(state)
     modified[action[1]].append(modified[action[0]][-1])
-    modified[action].pop()
+    modified[action[0]].pop()
     return modified
+
+
+def num_boundaries(state: GameState) -> int:
+    """Gets the number of boundaries between different colors across all the tubes in the game. This is used as an A*
+    heuristic by the solver. A solved """
+    boundaries = 0
+    for tube in state:
+        for i in range(len(tube) - 1):
+            if tube[i] != tube[i + 1]:
+                boundaries += 1
+    return boundaries
 
 
 class WaterSortProblem:
