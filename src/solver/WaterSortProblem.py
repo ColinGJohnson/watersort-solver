@@ -1,4 +1,5 @@
 import copy
+import logging
 from typing import List
 from src.solver.Types import GameState, Action, Tube
 
@@ -12,8 +13,12 @@ def is_complete(state: GameState):
 
 
 def pour(state: GameState, action: Action):
-    """Gets the state that results from making a pour (action) on a game state."""
+    """Gets the state that results from making a pour (action) on a game state. The last item in state[action[0]] is
+    added to state[action[1]]"""
     modified = copy.deepcopy(state)
+    if len(state[action[0]]) == 0:
+        logging.warning("Poured from an empty tube")
+        return modified
     modified[action[1]].append(modified[action[0]][-1])
     modified[action[0]].pop()
     return modified
