@@ -1,5 +1,5 @@
 from unittest import TestCase
-from WaterSortProblem import WaterSortProblem, is_complete, pour
+from WaterSortProblem import WaterSortProblem, is_complete, pour, can_pour
 
 
 class TestWaterSortProblem(TestCase):
@@ -40,7 +40,22 @@ class TestWaterSortProblem(TestCase):
         ),
 
     def test_can_pour(self):
-        pass
+        self.assertRaises(ValueError, lambda: can_pour(0, [1], []))
+
+        # Can't pour empty tube
+        self.assertFalse(can_pour(4, [], [1]))
+
+        # Can't pour into tube that is full
+        self.assertFalse(can_pour(4, [1], [1, 1, 1, 1]))
+
+        # Can't pour one color onto a different color
+        self.assertFalse(can_pour(4, [2], [1]))
+
+        # Pour into empty tube
+        self.assertTrue(can_pour(4, [1], []))
+
+        # Pour onto same color
+        self.assertTrue(can_pour(4, [1], [1, 1, 1]))
 
     def test_num_boundaries(self):
         pass

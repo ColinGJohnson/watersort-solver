@@ -35,6 +35,19 @@ def num_boundaries(state: GameState) -> int:
     return boundaries
 
 
+def can_pour(tube_capacity: int, source: Tube, sink: Tube) -> bool:
+    """Tests a given source tube can be legally poured in to given sink (destination) tube."""
+    if tube_capacity < 1:
+        raise ValueError("Tube capacity should be greater than or equal to one.")
+    elif len(source) == 0:
+        return False
+    elif len(sink) == 0:
+        return True
+    elif len(sink) >= tube_capacity or len(source) == 0:
+        return False
+    return source[-1] == sink[-1]
+
+
 class WaterSortProblem:
     def __init__(self, initial: GameState, tube_capacity: int):
         self.initial = initial
@@ -46,16 +59,6 @@ class WaterSortProblem:
         actions = []
         for i, source in enumerate(state):
             for j, sink in enumerate(state):
-                if i != j and self.can_pour(source, sink):
+                if i != j and can_pour(self.tube_capacity, source, sink):
                     actions.append((i, j))
         return actions
-
-    def can_pour(self, source: Tube, sink: Tube) -> bool:
-        """Tests a given source tube can be legally poured in to given sink (destination) tube."""
-        if len(source) == 0:
-            return False
-        elif len(sink) == 0:
-            return True
-        elif len(sink) >= self.tube_capacity or len(source) == 0:
-            return False
-        return source[-1] == sink[-1]
