@@ -10,7 +10,7 @@ class SearchTreeNode:
         self.state = state
         self.parent = parent
         self.action = action
-        self.path_cost = 0
+        self.path_cost = path_cost
 
     def __repr__(self):
         return "{}".format(self.state)

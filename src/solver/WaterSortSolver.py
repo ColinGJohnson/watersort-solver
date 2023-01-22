@@ -1,5 +1,5 @@
 import heapq
-from typing import List, Callable, Iterable, Type
+from typing import List, Callable, Iterable
 
 from src.solver import WaterSortProblem
 from src.solver.SearchTreeNode import SearchTreeNode
@@ -7,12 +7,24 @@ from src.solver.Types import GameState, Action
 from src.solver.WaterSortProblem import is_complete, get_actions, pour, num_boundaries
 
 
+def weighted_astar_search(problem: WaterSortProblem) -> SearchTreeNode:
+    """Search nodes with minimum (num moves + color boundaries) first, with extra weight on color boundaries."""
+    return best_first_graph_search(problem, f=lambda node: node.path_cost + 1.5 * num_boundaries(node.state))
+
+
 def astar_search(problem: WaterSortProblem) -> SearchTreeNode:
-    """Search nodes with minimum f(n) = g(n) + h(n)."""
-    return best_first_graph_search(
-        problem,
-        f=lambda node: node.path_cost + num_boundaries(node.state)
-    )
+    """Search nodes with minimum (num moves + color boundaries) first."""
+    return best_first_graph_search(problem, f=lambda node: node.path_cost + num_boundaries(node.state))
+
+
+def greedy_search(problem: WaterSortProblem) -> SearchTreeNode:
+    """Search nodes with minimum color boundaries first."""
+    return best_first_graph_search(problem, f=lambda node: num_boundaries(node.state))
+
+
+def uniform_cost_search(problem: WaterSortProblem) -> SearchTreeNode:
+    """Search nodes with minimum num moves first. This is also a breadth first search since move cost is 1."""
+    return best_first_graph_search(problem, f=lambda node: node.path_cost)
 
 
 def best_first_graph_search(problem: WaterSortProblem, f: Callable[[SearchTreeNode], int]) -> SearchTreeNode:
@@ -69,6 +81,9 @@ class PriorityQueue:
 
     def __len__(self):
         return len(self.items)
+
+    def __repr__(self):
+        return repr(self.items)
 
     def add(self, item):
         pair = (self.key(item), item)
