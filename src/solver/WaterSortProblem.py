@@ -1,6 +1,7 @@
 import copy
 import logging
-from typing import List
+from typing import Set
+
 from src.solver.Types import GameState, Action, Tube
 
 
@@ -12,21 +13,31 @@ def is_complete(state: GameState):
     return True
 
 
-def pour(state: GameState, action: Action):
+def pour(tube_capacity: int, state: GameState, action: Action):
     """Gets the state that results from making a pour (action) on a game state. The last item in state[action[0]] is
-    added to state[action[1]]"""
+    appended to state[action[1]] until there is no more of the same color left in the source, or there is no more
+    capacity in the sink."""
     modified = copy.deepcopy(state)
-    if len(state[action[0]]) == 0:
-        logging.warning("Poured from an empty tube")
+    source_index = action[0]
+    sink_index = action[1]
+
+    if len(state[source_index]) == 0:
+        logging.warning("Poured from an empty tube.")
         return modified
-    modified[action[1]].append(modified[action[0]][-1])
-    modified[action[0]].pop()
+
+    top_color = state[source_index][-1]
+    while len(modified[source_index]) > 0 \
+            and modified[source_index][-1] == top_color \
+            and len(modified[sink_index]) < tube_capacity:
+        modified[sink_index].append(top_color)
+        modified[source_index].pop()
+
     return modified
 
 
 def num_boundaries(state: GameState) -> int:
-    """Gets the number of boundaries between different colors across all the tubes in the game. This is used as an A*
-    heuristic by the solver. A solved """
+    """Gets the number of boundaries between different colors across all the tubes in the game. A solved puzzle has zero
+     such boundaries. This is used as the solver's A* heuristic. """
     boundaries = 0
     for tube in state:
         for i in range(len(tube) - 1):
@@ -48,17 +59,12 @@ def can_pour(tube_capacity: int, source: Tube, sink: Tube) -> bool:
     return source[-1] == sink[-1]
 
 
-class WaterSortProblem:
-    def __init__(self, initial: GameState, tube_capacity: int):
-        self.initial = initial
-        self.tube_capacity = tube_capacity
-
-    def get_actions(self, state: GameState) -> List[Action]:
-        """Gets a list of legal moves from a given state. Moves are represented as 2-tuples
-        representing (<index of source tube>, <index of sink tube>)."""
-        actions = []
-        for i, source in enumerate(state):
-            for j, sink in enumerate(state):
-                if i != j and can_pour(self.tube_capacity, source, sink):
-                    actions.append((i, j))
-        return actions
+def get_actions(tube_capacity: int, state: GameState) -> Set[Action]:
+    """Gets a list of legal moves from a given state. Moves are represented as 2-tuples
+    representing (<index of source tube>, <index of sink tube>)."""
+    actions = set()
+    for i, source in enumerate(state):
+        for j, sink in enumerate(state):
+            if i != j and can_pour(tube_capacity, source, sink):
+                actions.add((i, j))
+    return actions
