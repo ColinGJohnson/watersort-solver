@@ -1,5 +1,5 @@
 {
-    "tubecapacity": 4,
+    "tube_capacity": 4,
     "layout": [
         [0, 1, 1, 1],
         [1, 0, 2, 3],

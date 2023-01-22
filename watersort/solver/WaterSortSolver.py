@@ -1,10 +1,10 @@
 import heapq
 from typing import List, Callable, Iterable
 
-from src.solver import WaterSortProblem
-from src.solver.SearchTreeNode import SearchTreeNode
-from src.solver.Types import GameState, Action
-from src.solver.WaterSortProblem import is_complete, get_actions, pour, num_boundaries
+from watersort.solver import WaterSortProblem
+from watersort.solver.SearchTreeNode import SearchTreeNode
+from watersort.solver.Types import GameState, Action
+from watersort.solver.WaterSortProblem import is_complete, get_actions, pour, num_boundaries
 
 
 def weighted_astar_search(problem: WaterSortProblem) -> SearchTreeNode:
