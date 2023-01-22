@@ -7,8 +7,15 @@ from src.solver.Types import GameState, Action, Tube
 
 def is_complete(state: GameState):
     """Tests if the given puzzle state is a winner."""
+    seen_colors = set()
     for tube in state:
-        if len(set(tube)) > 1:
+        colors = set(tube)
+        if len(colors) == 1:
+            color = colors.pop()
+            if color in seen_colors:
+                return False
+            seen_colors.add(color)
+        elif len(colors) > 1:
             return False
     return True
 
@@ -68,3 +75,9 @@ def get_actions(tube_capacity: int, state: GameState) -> Set[Action]:
             if i != j and can_pour(tube_capacity, source, sink):
                 actions.add((i, j))
     return actions
+
+
+class WaterSortProblem:
+    def __init__(self, tube_capacity: int, initial_state: GameState):
+        self.tube_capacity = tube_capacity
+        self.initial_state = initial_state

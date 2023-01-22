@@ -14,3 +14,6 @@ class SearchTreeNode:
 
     def __repr__(self):
         return "{}".format(self.state)
+
+    def __lt__(self, other):
+        return self.path_cost < other.path_cost

@@ -13,6 +13,7 @@ class TestWaterSortProblem(TestCase):
         self.assertTrue(is_complete([[1, 1], [2], [3, 3, 3]]))
 
         # Incomplete
+        self.assertFalse(is_complete([[1], [1]]))
         self.assertFalse(is_complete([[1, 2]]))
         self.assertFalse(is_complete([[3], [1, 1, 2]]))
         self.assertFalse(is_complete([[2, 1, 1], [3]]))
@@ -82,7 +83,6 @@ class TestWaterSortProblem(TestCase):
         self.assertEqual(num_boundaries([[1, 2, 3, 4], [1, 2, 2], [5, 5, 5]]), 4)
 
     def test_get_actions(self):
-
         # There are no valid actions when there are no colors in the tubes
         self.assertSetEqual(set(), get_actions(4, []))
         self.assertSetEqual(set(), get_actions(4, [[]]))
