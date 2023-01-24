@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from watersort.solver.Types import GameState, Action
+from watersort.solver.WaterSortTypes import GameState, Action
 
 
 class SearchTreeNode:

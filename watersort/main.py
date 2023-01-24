@@ -2,7 +2,7 @@ import json
 
 
 def main():
-    with open("../problems/problem1.json") as fp:
+    with open("../resources/problems/problem1.json") as fp:
         initial = json.loads(fp.read())
         print("Problem:")
         print(initial)

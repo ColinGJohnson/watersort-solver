@@ -37,7 +37,7 @@ class Test(TestCase):
         print(path_actions(goal_node))
         print("actions used:", len(path_actions(goal_node)))
 
-    @unittest.skip("Disabled due to long runtime.")
+    # @unittest.skip("Disabled due to long runtime.")
     def test_uniform_cost_search(self):
         goal_node = uniform_cost_search(self.problem)
         print(goal_node)

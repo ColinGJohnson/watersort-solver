@@ -1,3 +1,5 @@
 PyAutoGUI~=0.9.53
 PyGetWindow~=0.0.9
-Pillow~=9.2.0
+Pillow~=9.4.0
+opencv-python~=4.7.0.68
+numpy~=1.24.1

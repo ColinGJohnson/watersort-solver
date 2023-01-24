@@ -1,15 +1,15 @@
-import heapq
 from typing import List, Callable, Iterable
 
+from watersort.solver.PriorityQueue import PriorityQueue
 from watersort.solver import WaterSortProblem
-from watersort.solver.SearchTreeNode import SearchTreeNode
-from watersort.solver.Types import GameState, Action
+from watersort.solver.WaterSortNode import SearchTreeNode
+from watersort.solver.WaterSortTypes import GameState, Action
 from watersort.solver.WaterSortProblem import is_complete, get_actions, pour, num_boundaries
 
 
 def weighted_astar_search(problem: WaterSortProblem) -> SearchTreeNode:
     """Search nodes with minimum (num moves + color boundaries) first, with extra weight on color boundaries."""
-    return best_first_graph_search(problem, f=lambda node: node.path_cost + 1.5 * num_boundaries(node.state))
+    return best_first_graph_search(problem, f=lambda node: node.path_cost + 1.1 * num_boundaries(node.state))
 
 
 def astar_search(problem: WaterSortProblem) -> SearchTreeNode:
@@ -34,9 +34,13 @@ def best_first_graph_search(problem: WaterSortProblem, f: Callable[[SearchTreeNo
     frontier = PriorityQueue([node], key=f)
     reached = {repr(problem.initial_state): node}
 
+    i = 0
+
     while frontier:
+        i += 1
         node = frontier.pop()
         if is_complete(node.state):
+            print("actions checked", i)
             return node
         for child in expand(problem, node):
             child_state_hash = repr(child.state)
@@ -68,30 +72,3 @@ def path_states(node: SearchTreeNode) -> List[GameState]:
     if node.parent is None:
         return []
     return path_states(node.parent) + [node.state]
-
-
-class PriorityQueue:
-    """A queue in which the item with minimum f(item) is always popped first."""
-
-    def __init__(self, items=(), key=lambda x: x):
-        self.key = key
-        self.items = []
-        for item in items:
-            self.add(item)
-
-    def __len__(self):
-        return len(self.items)
-
-    def __repr__(self):
-        return repr(self.items)
-
-    def add(self, item):
-        pair = (self.key(item), item)
-        heapq.heappush(self.items, pair)
-
-    def pop(self):
-        """Pop and return the item with min key(item) value."""
-        return heapq.heappop(self.items)[1]
-
-    def top(self):
-        return self.items[0][1]
