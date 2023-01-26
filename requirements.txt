@@ -3,3 +3,4 @@ PyGetWindow~=0.0.9
 Pillow~=9.4.0
 opencv-python~=4.7.0.68
 numpy~=1.24.1
+matplotlib~=3.6.3
