@@ -1,11 +1,9 @@
-import json
+from controller.WaterSortController import WaterSortController
 
 
 def main():
-    with open("../resources/problems/problem1.json") as fp:
-        initial = json.loads(fp.read())
-        print("Problem:")
-        print(initial)
+    controller = WaterSortController('Pixel 7 Pro')
+    print(controller.update_state())
 
 
 if __name__ == "__main__":

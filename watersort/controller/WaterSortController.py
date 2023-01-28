@@ -55,6 +55,24 @@ def crop_img(img, left_crop=0.05, right_crop=0.05, top_crop=0.3, bottom_crop=0.2
     return top, left, img.copy()[top:bottom, left:right]
 
 
+def add_sample_to_palette(palette: List[ArrayLike], color: ArrayLike):
+    """Adds a color to a set if it isn't similar enough to one already in the set. Colors are compared using the
+    CIE 2000 definition of color difference (https://en.wikipedia.org/wiki/Color_difference). Parameters are expected
+    to be colors in the Lab color space and provided as numpy arrays [L, a, b]."""
+
+    delta_e_threshold = 5
+
+    for i, palette_color in enumerate(palette):
+        delta_e = colour.delta_E(palette_color, color)
+        if delta_e < delta_e_threshold:
+            print("Found existing color in palette:", i, delta_e, color, palette_color)
+            return i
+
+    print("adding new color to palette:", color)
+    palette.append(color)
+    return len(palette) - 1
+
+
 class WaterSortController:
     """Abstracts actions in the 'SortPuz' app."""
 
@@ -74,24 +92,7 @@ class WaterSortController:
     def screenshot_window(self) -> Image:
         self.restore_window()
         region = (self.window.left, self.window.top, self.window.width, self.window.height)
-        return pyautogui.screenshot(region=region)
-
-    def add_sample_to_palette(self, palette: List[ArrayLike], color: ArrayLike):
-        """Adds a color to a set if it isn't similar enough to one already in the set. Colors are compared using the
-        CIE 2000 definition of color difference (https://en.wikipedia.org/wiki/Color_difference). Parameters are expected
-        to be colors in the Lab color space and provided as numpy arrays [L, a, b]."""
-
-        delta_e_threshold = 5
-
-        for i, palette_color in enumerate(palette):
-            delta_e = colour.delta_E(palette_color, color)
-            if delta_e < delta_e_threshold:
-                print("Found existing color in palette:", i, delta_e, color, palette_color)
-                return i
-
-        print("adding new color to palette:", color)
-        palette.append(color)
-        return len(palette) - 1
+        return cv.cvtColor(np.array(pyautogui.screenshot(region=region)), cv.COLOR_RGB2BGR)
 
     def update_state(self, debug=False):
         """Screenshot the window and apply image processing to determine the current game state"""
@@ -115,17 +116,15 @@ class WaterSortController:
                 'layers': self.read_tube_layer_colors(color_palette, tube_crop)
             })
 
-            for tube in tubes:
-                tube_location = tube['tube_location']
-                for layer in tube['layers']:
-                    sample_x, sample_y = layer.get('tube_position')
-                    layer['crop_position'] = (left + x + sample_x, top + y + sample_y)
-
-                    if debug:
-                        color = str(layer.get('color'))
-                        cv.drawMarker(img_screenshot, layer['crop_position'], (0, 255, 0), 2)
-                        cv.putText(img_screenshot, color, layer['crop_position'], cv.QT_FONT_NORMAL, 1, (255, 255, 255), 2, cv.LINE_AA)
-
+        for tube in tubes:
+            x, y, w, h = tube['tube_location']
+            for layer in tube['layers']:
+                sample_x, sample_y = layer.get('tube_position')
+                layer['crop_position'] = (left + x + sample_x, top + y + sample_y)
+                if debug:
+                    color = str(layer.get('color'))
+                    cv.drawMarker(img_screenshot, layer['crop_position'], (0, 255, 0), 2)
+                    cv.putText(img_screenshot, color, layer['crop_position'], cv.QT_FONT_NORMAL, 1, (255, 255, 255), 2, cv.LINE_AA)
         if debug:
             pprint(tubes)
             show_img(img_cropped)
@@ -134,22 +133,23 @@ class WaterSortController:
         return tubes
 
     def read_tube_layer_colors(self, color_palette, tube_crop):
-        # convert to lab to make it easier to compare colors
         h, w = tube_crop.shape
         tube_crop_lab = cv.cvtColor(tube_crop.astype(np.float32) / 255, cv.COLOR_BGR2Lab)
         offset = self.offset_proportion * h
         slice_height = (h - offset) / self.num_slices
+
         layers = []
         for i in range(self.num_slices):
             sample_y = int(offset + (slice_height * i) + (slice_height / 2))
             sample_x = int(w / 2)
             color_sample_lab = tube_crop_lab[sample_y, sample_x]
-            sample_index = self.add_sample_to_palette(color_palette, color_sample_lab)
+            sample_index = add_sample_to_palette(color_palette, color_sample_lab)
             layers.append({
                 'color_lab': color_sample_lab,
                 'color_index': sample_index,
                 'tube_position_xy': (sample_x, sample_y)
             })
+
         return layers
 
     def execute_action(self, action: Action):
