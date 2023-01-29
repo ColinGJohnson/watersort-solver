@@ -94,7 +94,7 @@ class WaterSortController:
         region = (self.window.left, self.window.top, self.window.width, self.window.height)
         return cv.cvtColor(np.array(pyautogui.screenshot(region=region)), cv.COLOR_RGB2BGR)
 
-    def update_state(self, debug=False):
+    def update_state(self, debug=True):
         """Screenshot the window and apply image processing to determine the current game state"""
 
         img_screenshot = self.screenshot_window()
@@ -119,7 +119,7 @@ class WaterSortController:
         for tube in tubes:
             x, y, w, h = tube['tube_location']
             for layer in tube['layers']:
-                sample_x, sample_y = layer.get('tube_position')
+                sample_x, sample_y = layer.get('tube_position_xy')
                 layer['crop_position'] = (left + x + sample_x, top + y + sample_y)
                 if debug:
                     color = str(layer.get('color'))
@@ -133,7 +133,7 @@ class WaterSortController:
         return tubes
 
     def read_tube_layer_colors(self, color_palette, tube_crop):
-        h, w = tube_crop.shape
+        h, w, _ = tube_crop.shape
         tube_crop_lab = cv.cvtColor(tube_crop.astype(np.float32) / 255, cv.COLOR_BGR2Lab)
         offset = self.offset_proportion * h
         slice_height = (h - offset) / self.num_slices
