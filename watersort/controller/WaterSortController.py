@@ -185,8 +185,12 @@ class WaterSortController:
         sink_location = self.controller_state[sink_index]['layers'][0]['window_position']
         self.click_window_location((sink_location[0], sink_location[1]))
 
-    def click_window_location(self, target: Tuple[int, int]):
+        # Click again to skip pour animation
+        time.sleep(0.3)
+        self.click_window_location((sink_location[0], sink_location[1]), duration=0)
+
+    def click_window_location(self, target: Tuple[int, int], duration=0.2):
         monitor_x = self.window.left + target[0]
         monitor_y = self.window.top + target[1]
-        pyautogui.moveTo(monitor_x, monitor_y, duration=0.2, tween=pyautogui.easeInOutQuad)
+        pyautogui.moveTo(monitor_x, monitor_y, duration=duration, tween=pyautogui.easeInOutQuad)
         pyautogui.click()
