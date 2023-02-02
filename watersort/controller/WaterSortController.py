@@ -79,27 +79,36 @@ class WaterSortController:
     window_position = {'x': 40, 'y': 10}
 
     def __init__(self, window_title: str, num_slices=4):
+        self.window = None
         self.controller_state = None
         self.num_slices = num_slices
-        self.window = gw.getWindowsWithTitle(window_title)[0]
+        self.window_title = window_title
 
     def restore_window(self):
         """Moves the game window to a standard location on the main monitor. Main monitor is needed
         because screenshots don't work on secondary monitors."""
+        if self.window_title in gw.getAllTitles():
+            raise Exception("Scrcpy window is not open, or window title is incorrect.")
+
+        self.window = gw.getWindowsWithTitle(self.window_title)[0]
         self.window.restore()
         self.window.activate()
         self.window.moveTo(self.window_position['x'], self.window_position['y'])
 
-    def screenshot_window(self) -> NDArray:
+    def screenshot_window(self, ) -> NDArray:
         self.restore_window()
         region = (self.window.left, self.window.top, self.window.width, self.window.height)
         return cv.cvtColor(np.array(pyautogui.screenshot(region=region)), cv.COLOR_RGB2BGR)
 
-    def update_state(self, debug=True) -> GameState:
+    def update_state(self):
+        screenshot = self.screenshot_window()
+        self.controller_state = self.parse_screenshot(screenshot)
+        return self.controller_state
+
+    def parse_screenshot(self, screenshot: NDArray, debug=True) -> GameState:
         """Screenshot the window and apply image processing to determine the current game state"""
 
-        img_screenshot = self.screenshot_window()
-        top, left, img_cropped = crop_img(img_screenshot)
+        top, left, img_cropped = crop_img(screenshot)
 
         # assume the game's background color is similar to the pixel at the top right of the cropped screenshot
         bg_color = cv.cvtColor(img_cropped.astype(np.float32) / 255, cv.COLOR_BGR2Lab)[0, 0]
@@ -147,8 +156,6 @@ class WaterSortController:
 
         if debug:
             show_img(img_cropped)
-
-        self.controller_state = tubes
 
         # convert the internal state used by the controller to a state usable by the solver
         layers = [[layer.get('color_index') for layer in tube.get('layers')] for tube in tubes]
