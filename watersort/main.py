@@ -2,7 +2,7 @@ import time
 
 from controller.WaterSortController import WaterSortController
 from solver.WaterSortProblem import WaterSortProblem
-from solver.WaterSortSolver import path_actions, weighted_astar_search
+from solver.WaterSortSolver import path_actions, weighted_astar_search, greedy_search
 
 
 def main():
@@ -11,7 +11,7 @@ def main():
     print("Initial State:", state)
 
     problem = WaterSortProblem(4, state)
-    solution = path_actions(weighted_astar_search(problem))
+    solution = path_actions(greedy_search(problem))
     print("Solution:", solution)
 
     for action in solution:

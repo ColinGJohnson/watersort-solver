@@ -87,7 +87,8 @@ class WaterSortController:
     def restore_window(self):
         """Moves the game window to a standard location on the main monitor. Main monitor is needed
         because screenshots don't work on secondary monitors."""
-        if self.window_title in gw.getAllTitles():
+
+        if self.window_title not in gw.getAllTitles():
             raise Exception("Scrcpy window is not open, or window title is incorrect.")
 
         self.window = gw.getWindowsWithTitle(self.window_title)[0]
@@ -102,8 +103,7 @@ class WaterSortController:
 
     def update_state(self):
         screenshot = self.screenshot_window()
-        self.controller_state = self.parse_screenshot(screenshot)
-        return self.controller_state
+        return self.parse_screenshot(screenshot)
 
     def parse_screenshot(self, screenshot: NDArray, debug=True) -> GameState:
         """Screenshot the window and apply image processing to determine the current game state"""
@@ -146,8 +146,7 @@ class WaterSortController:
                 # TODO: Not currently used by click_window_location, this can be removed
                 layer['monitor_position'] = (
                     self.window_position['x'] + layer['crop_position'][0],
-                    self.window_position['y'] + layer['crop_position'][1]
-                )
+                    self.window_position['y'] + layer['crop_position'][1])
 
                 if debug:
                     color = str(layer.get('color_index'))
@@ -156,6 +155,8 @@ class WaterSortController:
 
         if debug:
             show_img(img_cropped)
+
+        self.controller_state = tubes
 
         # convert the internal state used by the controller to a state usable by the solver
         layers = [[layer.get('color_index') for layer in tube.get('layers')] for tube in tubes]
