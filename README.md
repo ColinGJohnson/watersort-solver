@@ -1,7 +1,7 @@
 
 # Water Sort Puzzle Solver
 
-Solves "water sort puzzle" style games. One version, [SortPuz: Water Sort Puzzle](https://play.google.com/store/apps/details?id=sortpuz.water.sort.puzzle.game), can be played automatically.
+Bot for [SortPuz: Water Sort Puzzle](https://play.google.com/store/apps/details?id=sortpuz.water.sort.puzzle.game).
 
 ## Dependencies
 
