@@ -1,15 +1,13 @@
-import os
 from unittest import TestCase
 
 import cv2 as cv
-from controller.SortPuzController import WaterSortController
+from watersort.controller.SortPuzController import WaterSortController
 
 
 class TestWaterSortController(TestCase):
 
     def test_parse_screenshot(self):
         controller = WaterSortController('Test')
-        print(os.getcwd())
         test_image = cv.imread('resources/test_screenshot.png', cv.IMREAD_COLOR)
         state = controller.parse_screenshot(test_image, debug=False)
         self.assertEqual(

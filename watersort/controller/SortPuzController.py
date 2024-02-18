@@ -1,5 +1,6 @@
 import time
 from typing import List, Tuple
+import logging
 
 import colour
 import cv2 as cv
@@ -9,7 +10,7 @@ import pyautogui
 import pygetwindow as gw
 from numpy._typing import ArrayLike, NDArray
 
-from solver.WaterSortTypes import Action, GameState
+from watersort.solver.WaterSortTypes import Action, GameState
 
 
 def show_img(img_plt):
@@ -192,6 +193,9 @@ class WaterSortController:
 
         sink_location = self.controller_state[sink_index]['layers'][0]['window_position']
         self.click_window_location((sink_location[0], sink_location[1]))
+
+        # log indexes and screen locations
+        logging.info(f"Action source: {source_index} {source_location} | Sink: {sink_index} {sink_location}")
 
         # Click again to skip pour animation
         time.sleep(0.3)

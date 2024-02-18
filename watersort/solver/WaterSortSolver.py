@@ -1,4 +1,5 @@
 from typing import List, Callable, Iterable
+import logging
 
 from watersort.solver.PriorityQueue import PriorityQueue
 from watersort.solver import WaterSortProblem
@@ -40,7 +41,7 @@ def best_first_graph_search(problem: WaterSortProblem, f: Callable[[SearchTreeNo
         i += 1
         node = frontier.pop()
         if is_complete(node.state):
-            print("actions checked", i)
+            logging.info(f"Searched {i} nodes.")
             return node
         for child in expand(problem, node):
             child_state_hash = repr(child.state)
