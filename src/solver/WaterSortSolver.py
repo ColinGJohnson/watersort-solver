@@ -1,11 +1,11 @@
 from typing import List, Callable, Iterable
 import logging
 
-from watersort.solver.PriorityQueue import PriorityQueue
-from watersort.solver import WaterSortProblem
-from watersort.solver.WaterSortNode import SearchTreeNode
-from watersort.solver.WaterSortTypes import GameState, Action
-from watersort.solver.WaterSortProblem import is_complete, get_actions, pour, num_boundaries
+from solver.PriorityQueue import PriorityQueue
+from solver import WaterSortProblem
+from solver.WaterSortNode import SearchTreeNode
+from solver.WaterSortTypes import GameState, Action
+from solver.WaterSortProblem import is_complete, get_actions, pour, num_boundaries
 
 
 def weighted_astar_search(problem: WaterSortProblem) -> SearchTreeNode:

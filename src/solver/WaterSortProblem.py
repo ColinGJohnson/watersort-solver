@@ -2,7 +2,7 @@ import copy
 import logging
 from typing import Set
 
-from watersort.solver.WaterSortTypes import GameState, Action, Tube
+from solver.WaterSortTypes import GameState, Action, Tube
 
 
 def is_complete(state: GameState):

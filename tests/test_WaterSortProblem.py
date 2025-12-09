@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from watersort.solver.WaterSortProblem import is_complete, pour, can_pour, num_boundaries, get_actions
+from solver.WaterSortProblem import is_complete, pour, can_pour, num_boundaries, get_actions
 
 
 class TestWaterSortProblem(TestCase):

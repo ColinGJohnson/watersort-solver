@@ -10,7 +10,7 @@ import pyautogui
 import pygetwindow as gw
 from numpy._typing import ArrayLike, NDArray
 
-from watersort.solver.WaterSortTypes import Action, GameState
+from solver.WaterSortTypes import GameState, Action
 
 
 def show_img(img_plt):

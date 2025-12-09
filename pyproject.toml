@@ -1,0 +1,21 @@
+[project]
+name = "watersort"
+version = "0.1.0"
+description = "Solver and bot for water sort puzzle games"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "colour-science==0.4.7",
+    "matplotlib>=3.10.7",
+    "opencv-python==4.12.0.88",
+    "pyautogui==0.9.54",
+    "pygetwindow==0.0.9",
+    "scipy==1.16.3",
+]
+
+[project.scripts]
+watersort = "watersort:solve"
+
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"

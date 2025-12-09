@@ -1,8 +1,8 @@
 import unittest
 from unittest import TestCase
 
-from watersort.solver.WaterSortProblem import WaterSortProblem
-from watersort.solver.WaterSortSolver import astar_search, path_actions, uniform_cost_search, greedy_search, \
+from solver.WaterSortProblem import WaterSortProblem
+from solver.WaterSortSolver import astar_search, path_actions, uniform_cost_search, greedy_search, \
     weighted_astar_search
 
 

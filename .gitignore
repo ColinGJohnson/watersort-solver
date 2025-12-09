@@ -1,5 +1,6 @@
+.venv/
 .vscode/
 .idea/
 bin/
-venv/
+__pycache__/
 debug.log

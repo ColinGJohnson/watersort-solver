@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 import cv2 as cv
-from watersort.controller.SortPuzController import WaterSortController
+from controller.SortPuzController import WaterSortController
 
 
 class TestWaterSortController(TestCase):
